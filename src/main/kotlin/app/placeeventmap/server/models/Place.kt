@@ -33,6 +33,7 @@ class Place() {
     @Column
     var address: String? = ""
 
+    @JsonIgnore
     @Column
     var status: Status? = Status.UNVERIFIED
 
