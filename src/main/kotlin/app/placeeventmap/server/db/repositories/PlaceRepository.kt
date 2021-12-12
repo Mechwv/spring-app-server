@@ -1,0 +1,9 @@
+package app.placeeventmap.server.db.repositories
+
+import app.placeeventmap.server.models.Place
+import org.springframework.data.jpa.repository.JpaRepository
+import java.util.*
+
+interface PlaceRepository: JpaRepository<Place, UUID> {
+    fun findPlacesByStatus(status: Place.Status): List<Place>
+}
