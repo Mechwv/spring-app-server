@@ -17,6 +17,7 @@ repositories {
 }
 
 dependencies {
+	api(fileTree("../libs") { include("*.jar") })
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
 	implementation("org.springframework.boot:spring-boot-starter-security")
@@ -45,3 +46,9 @@ tasks.withType<KotlinCompile> {
 tasks.withType<Test> {
 	useJUnitPlatform()
 }
+
+tasks.bootJar {
+	// Set constant archive name for docker build
+	archiveFileName.set("app.jar")
+}
+
