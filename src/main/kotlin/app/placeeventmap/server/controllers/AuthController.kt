@@ -26,8 +26,8 @@ class AuthController(
 
     @DelicateCoroutinesApi
     @PostMapping("auth")
-    fun authentification(@RequestBody profile: Profile): ResponseEntity<String> {
-        var result: ResponseEntity<String> = ResponseEntity.badRequest().body("There is no info")
+    fun authentification(@RequestBody profile: Profile): ResponseEntity<JWTstring> {
+        var result: ResponseEntity<JWTstring> = ResponseEntity.badRequest().body(JWTstring("There is no info"))
         if (profile.authToken != null) {
             runBlocking {
                 val job = GlobalScope.launch {
@@ -37,11 +37,11 @@ class AuthController(
                         val userDetails = userDetailsService.loadUserByUsername(profile.authToken!!)
                         if (userDetails != null) {
                             println("THIS USER ALREADY EXISTS: ${profile.authToken!!}")
-                            result = ResponseEntity.ok(jwtUtils.generateToken(userDetails))
+                            result = ResponseEntity.ok().body(JWTstring(jwtUtils.generateToken(userDetails)!!))
                         } else {
                             profileRepository.save(profile)
                             val newUserDetails = userDetailsService.loadUserByUsername(profile.authToken!!)
-                            result = ResponseEntity.ok(jwtUtils.generateToken(newUserDetails!!))
+                            result = ResponseEntity.ok().body(JWTstring(jwtUtils.generateToken(newUserDetails!!)!!))
                         }
 
                     }
@@ -51,6 +51,10 @@ class AuthController(
         }
         return result
     }
+
+    data class JWTstring(
+        val jwtString: String
+    )
 
 //    @DelicateCoroutinesApi
 //    @PostMapping("profile/info")

@@ -20,7 +20,7 @@ class ProfileController(private val profileRepository: ProfileRepository) {
     private val common = Common
 
     @DelicateCoroutinesApi
-    @GetMapping("info")
+    @GetMapping("/info")
     fun getInfoByToken(authentication: Authentication): ResponseEntity<ProfileInfo?> {
         var result: ResponseEntity<ProfileInfo?> = ResponseEntity.badRequest().body(null)
 
