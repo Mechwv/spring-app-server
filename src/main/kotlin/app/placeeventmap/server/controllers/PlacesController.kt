@@ -16,7 +16,7 @@ class PlacesController(
     val placeRepository: PlaceRepository
 ) {
 
-    @GetMapping("/places/all")
+    @GetMapping("/all")
     fun getOnlinePlaces(authentication: Authentication): ResponseEntity<List<Place>> {
         val role = authentication.authorities.iterator().next().authority
         var status = Place.Status.UNVERIFIED

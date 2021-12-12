@@ -1,5 +1,6 @@
 package app.placeeventmap.server.models
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import org.springframework.lang.NonNull
 import javax.persistence.Column
 import javax.persistence.Entity
