@@ -19,9 +19,9 @@ class PlacesController(
     @GetMapping("/all")
     fun getOnlinePlaces(authentication: Authentication): ResponseEntity<List<Place>> {
         val role = authentication.authorities.iterator().next().authority
-        var status = Place.Status.UNVERIFIED
+        var status = Place.Status.VERIFIED
         if (role == Role.MODERATOR.role) {
-            status = Place.Status.VERIFIED
+            status = Place.Status.UNVERIFIED
         }
         return ResponseEntity.ok(placeRepository.findPlacesByStatus(status))
     }
