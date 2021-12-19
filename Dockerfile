@@ -1,10 +1,9 @@
 FROM gradle:7.0-jdk11 AS build
 COPY --chown=gradle:gradle . /home/gradle/src
 WORKDIR /home/gradle/src
-RUN gradle build --no-daemon --stacktrace
+RUN gradle build --no-daemon
 
 FROM openjdk:11-jdk
-EXPOSE 5432
 COPY --from=build /home/gradle/src/build/libs/app.jar app.jar
 ENTRYPOINT ["java","-jar","/app.jar"]
 
