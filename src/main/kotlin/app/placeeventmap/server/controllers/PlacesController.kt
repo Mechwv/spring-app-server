@@ -6,6 +6,7 @@ import app.placeeventmap.server.models.Profile.Role
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -15,6 +16,11 @@ import org.springframework.web.bind.annotation.RestController
 class PlacesController(
     val placeRepository: PlaceRepository
 ) {
+    @PostMapping("/save")
+    fun savePlaces(authentication: Authentication, @RequestBody places: List<Place>): ResponseEntity<Boolean> {
+        println("PLACES_TO_SAVE: ${places}")
+        return ResponseEntity.ok(true)
+    }
 
     @GetMapping("/all")
     fun getOnlinePlaces(authentication: Authentication): ResponseEntity<List<Place>> {
