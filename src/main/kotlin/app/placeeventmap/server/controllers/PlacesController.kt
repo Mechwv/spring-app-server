@@ -1,25 +1,49 @@
 package app.placeeventmap.server.controllers
 
-import app.placeeventmap.server.db.repositories.PlaceRepository
+import app.placeeventmap.server.db.repositories.ProfileRepository
 import app.placeeventmap.server.models.Place
 import app.placeeventmap.server.models.Profile.Role
+import app.placeeventmap.server.security.services.PlaceService
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.Authentication
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("places")
 class PlacesController(
-    val placeRepository: PlaceRepository
+    val placeService: PlaceService,
+    val profileRepository: ProfileRepository
 ) {
     @PostMapping("/save")
-    fun savePlaces(authentication: Authentication, @RequestBody places: List<Place>): ResponseEntity<Boolean> {
-        println("PLACES_TO_SAVE: ${places}")
-        return ResponseEntity.ok(true)
+    suspend fun savePlaces(authentication: Authentication, @RequestBody places: MutableList<Place>): Any {
+        println("\n\n\nPLACES_TO_SAVE: ${places}")
+        println(authentication.name)
+        val profileId = withContext(Dispatchers.IO) {
+            profileRepository.findByAuthTokenLike(authentication.name)
+        }?.id
+        if (profileId != null) {
+            places.forEach {
+                it.ownerId = profileId
+                println(it.toString())
+            }
+            placeService.updateWithDownloadedValues(ownerId = profileId, places)
+            return ResponseEntity.ok(true)
+        }
+        return ResponseEntity.badRequest()
+    }
+
+    @GetMapping("/download")
+    fun getProfilePlaces(authentication: Authentication): Any {
+        try {
+            val profileId = profileRepository.findByAuthTokenLike(authentication.name)?.id
+            val places = placeService.findPlacesByOwnerId(profileId!!)
+            println("PLACES: $places")
+            return ResponseEntity.ok(places)
+        } catch (e: Exception) {
+            return ResponseEntity.badRequest()
+        }
     }
 
     @GetMapping("/all")
@@ -29,7 +53,7 @@ class PlacesController(
         if (role == Role.MODERATOR.role) {
             status = Place.Status.UNVERIFIED
         }
-        val places = placeRepository.findPlacesByStatus(status)
+        val places = placeService.findPlacesByStatus(status)
         println("PLACES: $places")
         return ResponseEntity.ok(places)
     }

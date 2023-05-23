@@ -10,7 +10,7 @@ class Profile() {
     @Id
     @GeneratedValue
     @Column
-    private val id: UUID? = null
+    val id: UUID? = null
 
     @Column(unique = true)
     var authToken: String? = null
