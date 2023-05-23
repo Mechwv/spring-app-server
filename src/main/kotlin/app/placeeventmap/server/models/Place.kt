@@ -6,6 +6,7 @@ import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.Id
+import kotlin.random.Random
 
 @Entity
 class Place() {
@@ -19,7 +20,7 @@ class Place() {
     var latitude: Double = 0.0
 
     @Column
-    var longtitude: Double = 0.0
+    var longitude: Double = 0.0
 
     @Column
     var name: String = "Default Place"
@@ -47,5 +48,8 @@ class Place() {
     ) : this() {
         this.name = name
         this.status = status
+        this.latitude = Random.nextDouble(-90.0,90.0)
+        this.longitude = Random.nextDouble(-180.0,180.0)
+        this.description = "Mock data ${Random.nextInt(0, 9999)}"
     }
 }

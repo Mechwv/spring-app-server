@@ -24,6 +24,8 @@ class ProfileController(private val profileRepository: ProfileRepository) {
     fun getInfoByToken(authentication: Authentication): ResponseEntity<ProfileInfo?> {
         var result: ResponseEntity<ProfileInfo?> = ResponseEntity.badRequest().body(null)
 
+        println("AUTHENTICATION NAME: ${authentication.name}")
+
         val profile: Profile? = profileRepository.findByAuthTokenLike(authentication.name)
 
         runBlocking {

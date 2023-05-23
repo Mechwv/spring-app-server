@@ -18,12 +18,10 @@ import javax.servlet.http.HttpServletResponse
 
 
 @Component
-class JwtRequestFilter : OncePerRequestFilter() {
-    @Autowired
-    private val jwtUserDetailsService: JwtUserDetailsService? = null
-
-    @Autowired
-    private val jwtTokenUtil: JwtTokenUtil? = null
+class JwtRequestFilter(
+    private val jwtUserDetailsService: JwtUserDetailsService,
+    private val jwtTokenUtil: JwtTokenUtil
+) : OncePerRequestFilter() {
 
     @Throws(ServletException::class, IOException::class)
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
@@ -36,6 +34,7 @@ class JwtRequestFilter : OncePerRequestFilter() {
             jwtToken = requestTokenHeader.substring(7)
             try {
                 userToken = jwtTokenUtil!!.getUsernameFromToken(jwtToken)
+                println("USERTOKEN: $userToken")
             } catch (e: IllegalArgumentException) {
                 println("Unable to get JWT Token")
             } catch (e: ExpiredJwtException) {
@@ -46,7 +45,7 @@ class JwtRequestFilter : OncePerRequestFilter() {
         }
 
         if (userToken != null && SecurityContextHolder.getContext().authentication == null) {
-            val userDetails: UserDetails? = jwtUserDetailsService!!.loadUserByUsername(userToken)
+            val userDetails: UserDetails? = jwtUserDetailsService.loadUserByUsername(userToken)
 
             if (jwtTokenUtil!!.validateToken(jwtToken, userDetails!!)!!) {
                 val usernamePasswordAuthenticationToken = UsernamePasswordAuthenticationToken(

@@ -16,6 +16,7 @@ class JwtUserDetailsService(val repository: ProfileRepository) : UserDetailsServ
     @Throws(UsernameNotFoundException::class)
     override fun loadUserByUsername(userName: String): UserDetails? {
         val profile: Profile? = repository.findByAuthTokenLike(userName)
+        println("PROFILE: $profile")
         return if (profile != null) {
             User(
                 profile.authToken,

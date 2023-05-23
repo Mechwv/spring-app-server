@@ -23,6 +23,8 @@ class PlacesController(
         if (role == Role.MODERATOR.role) {
             status = Place.Status.UNVERIFIED
         }
-        return ResponseEntity.ok(placeRepository.findPlacesByStatus(status))
+        val places = placeRepository.findPlacesByStatus(status)
+        println("PLACES: $places")
+        return ResponseEntity.ok(places)
     }
 }

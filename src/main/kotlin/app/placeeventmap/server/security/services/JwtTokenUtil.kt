@@ -22,9 +22,6 @@ class JwtTokenUtil {
         val claims: Claims = getAllClaimsFromToken(token)
         return claimsResolver.apply(claims)
     }
-    //    fun getUsernameFromToken(token: String?): String {
-//        return getClaimFromToken(token, Claims::getSubject)
-//    }
     fun getUsernameFromToken(token: String?) :  String {
         val claims: Claims = getAllClaimsFromToken(token);
         return (claims::getSubject)();
@@ -33,10 +30,6 @@ class JwtTokenUtil {
         val claims: Claims = getAllClaimsFromToken(token);
         return (claims::getExpiration)()
     }
-
-//    fun getExpirationDateFromToken(token: String?): Date {
-//        return getClaimFromToken(token, Claims::getExpiration)
-//    }
 
     private fun isTokenExpired(token: String?): Boolean? {
         val expiration: Date = getExpirationDateFromToken(token)
@@ -56,6 +49,7 @@ class JwtTokenUtil {
 
     fun validateToken(token: String?, userDetails: UserDetails): Boolean? {
         val username = getUsernameFromToken(token)
+        println("TOKEN USERNAME: $username ||| USERDETAILS: ${userDetails.username}")
         return username == userDetails.username && !isTokenExpired(token)!!
     }
 
