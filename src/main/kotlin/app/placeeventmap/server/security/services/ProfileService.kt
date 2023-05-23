@@ -25,7 +25,8 @@ class ProfileService(private val profileRepository: ProfileRepository) {
 interface PlaceService {
     fun findPlacesByOwnerId(ownerId: UUID): List<Place>
     fun findPlacesByStatus(status: Place.Status): List<Place>
-    suspend fun updateWithDownloadedValues(ownerId: UUID, places: List<Place>)
+    @Transactional
+    fun updateWithDownloadedValues(ownerId: UUID, places: List<Place>)
 }
 
 @Service
@@ -38,13 +39,8 @@ class PlaceServiceImpl(private val placeRepository: PlaceRepository): PlaceServi
     override fun findPlacesByStatus(status: Place.Status): List<Place> {
         return placeRepository.findPlacesByStatus(status)
     }
-    override suspend fun updateWithDownloadedValues(ownerId: UUID, places: List<Place>) {
-        val job = CoroutineScope(Dispatchers.IO).launch {
-            placeRepository.deleteAllByOwnerId(ownerId = ownerId)
-        }
-        job.join()
-        withContext(Dispatchers.IO) {
-            placeRepository.saveAll(places)
-        }
+    override fun updateWithDownloadedValues(ownerId: UUID, places: List<Place>) {
+        placeRepository.deleteAllByOwnerId(ownerId = ownerId)
+        placeRepository.saveAll(places)
     }
 }
