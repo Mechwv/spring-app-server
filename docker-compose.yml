@@ -1,0 +1,6 @@
+version: "3.9"
+services:
+  app-server:
+    build: .
+    ports:
+      - "1234:8080"
